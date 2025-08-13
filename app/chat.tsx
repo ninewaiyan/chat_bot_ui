@@ -17,7 +17,7 @@ import { ThemeContext } from "../ThemeContext";
 
 type Message = { id: string; text: string; isUser: boolean };
 
-const OPENAI_API_KEY = "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"; // Replace with your key
+const OPENAI_API_KEY = "sk-proj-DrY8XAyPDoD09kbVTRafbN_qJ80VsSE2no4ecdXQKvXUcqG38cvmxCoBTmhea_IClMvGI8-jBc0T3BlbkFJpNFeX3o5DErKkpsR1Miqysq5YA0meVUrGDHiFzdQqSjNqyQMRUQuJPSrXOn3BFQ00IPSjVHBcA"; // Replace with your key
 
 export default function Chat() {
   const router = useRouter();
