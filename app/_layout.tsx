@@ -1,9 +1,7 @@
 // app/_layout.tsx
-import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import React, { useState } from "react";
 import { useColorScheme } from "react-native";
-import { DefaultTheme } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Toaster } from "sonner-native";
 import { ThemeContext } from "../ThemeContext";
@@ -19,14 +17,13 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <Toaster />
       <ThemeContext.Provider  value={{ scheme, toggle }}>
-        <NavigationContainer theme={scheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack
             screenOptions={{
             headerShown:true,
             headerTitleAlign: "center",
           }}
         />
-         </NavigationContainer >
+
       </ThemeContext.Provider>
     </SafeAreaProvider>
   );
