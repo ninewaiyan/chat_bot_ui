@@ -1,0 +1,14 @@
+{
+  "settings": "Settings",
+  "darkMode": "Dark Mode",
+  "language": "Language",
+  "english": "English",
+  "myanmar": "Myanmar",
+  "backHome": "Back to Home",
+  "send":"send",
+  "chat":"Open Chat",
+  "check":"Check For Safety",
+  "suggestion":"Auto Suggestion",
+  "checkTitle":"Phishing Link Checker",
+  "checkPlaceHolder":"Paste email link here..."
+}

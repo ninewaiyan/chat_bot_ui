@@ -1,6 +1,7 @@
 // app/index.tsx
 import { useRouter } from "expo-router";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { ThemeContext } from "../ThemeContext";
@@ -10,15 +11,23 @@ export default function Home() {
   const { scheme } = useContext(ThemeContext);
   const isDark = scheme === "dark";
 
+    const { t, i18n } = useTranslation();
+      const [language, setLanguage] = useState(i18n.language);
+    
+      const changeLanguage = async (lng: "en" | "mm") => {
+        await i18n.changeLanguage(lng); // persisted by languageDetector.cacheUserLanguage
+        setLanguage(lng);
+      };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Chatbot</Text>
       <Text style={styles.subtitle}>Chat For Your Pravicy</Text>
       <Pressable style={styles.button } onPress={()=>router.push("/chat")} >
-        <Text style={styles.buttonText}>Open Chat</Text>
+        <Text style={styles.buttonText}>{t("chat")}</Text>
       </Pressable>
-      <Pressable style={styles.button } onPress={()=>router.push("/chat")} >
-        <Text style={styles.buttonText}>Check for safety</Text>
+      <Pressable style={styles.button } onPress={()=>router.push("/check")} >
+        <Text style={styles.buttonText}>{t("check")}</Text>
       </Pressable>
     </View>
   );

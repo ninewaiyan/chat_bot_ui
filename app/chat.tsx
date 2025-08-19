@@ -2,6 +2,7 @@
 import axios from "axios";
 import { useNavigation, useRouter } from "expo-router";
 import React, { useContext, useLayoutEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   FlatList,
@@ -29,6 +30,14 @@ export default function Chat() {
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
+
+    const { t, i18n } = useTranslation();
+    const [language, setLanguage] = useState(i18n.language);
+  
+    const changeLanguage = async (lng: "en" | "mm") => {
+      await i18n.changeLanguage(lng); // persisted by languageDetector.cacheUserLanguage
+      setLanguage(lng);
+    };
 
   // Header buttons: Dark mode toggle & Settings button
   useLayoutEffect(() => {
@@ -128,7 +137,7 @@ export default function Chat() {
           <ActivityIndicator size="small" color={isDark ? "#fff" : "#000"} style={{ marginLeft: 10 }} />
         ) : (
           <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
-            <Text style={{ color: "#fff", fontWeight: "bold" }}>Send</Text>
+            <Text style={{ color: "#fff", fontWeight: "bold" }}>{t("send")}</Text>
           </TouchableOpacity>
         )}
       </View>

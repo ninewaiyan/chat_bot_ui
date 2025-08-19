@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useColorScheme } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Toaster } from "sonner-native";
+import "../i18n";
 import { ThemeContext } from "../ThemeContext";
 
 export default function RootLayout() {
