@@ -26,19 +26,26 @@ export default function CheckPage() {
         };
   
 
-  // Header buttons: Dark mode toggle & Settings button
+// Header buttons: Dark mode toggle & Settings button
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Check",
+      headerTitle: "Home",
       headerRight: () => (
         <View style={{ flexDirection: "row" }}>
+          {/* Dark / Light Toggle */}
           <TouchableOpacity onPress={toggle} style={styles.headerButton}>
             <Text style={{ color: isDark ? "#fff" : "#000", fontSize: 20 }}>
               {isDark ? "🌞" : "🌙"}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/settings")} style={styles.headerButton}>
-            <Text style={{ color: isDark ? "#fff" : "#000", fontSize: 20 }}>⚙️</Text>
+          {/* Settings Button */}
+          <TouchableOpacity
+            onPress={() => router.push("/settings")}
+            style={styles.headerButton}
+          >
+            <Text style={{ color: isDark ? "#fff" : "#000", fontSize: 20 }}>
+              ⚙️
+            </Text>
           </TouchableOpacity>
         </View>
       ),

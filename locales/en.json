@@ -10,5 +10,8 @@
   "check":"Check For Safety",
   "suggestion":"Auto Suggestion",
   "checkTitle":"Phishing Link Checker",
-  "checkPlaceHolder":"Paste email link here..."
+  "checkPlaceHolder":"Paste email link here...",
+  "login":"login",
+  "register":"register"
+
 }

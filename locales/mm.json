@@ -10,5 +10,7 @@
   "check":"စစ်ဆေးမယ်",
   "suggestion":"အလိုအလျောက်စာပို့မည်",
   "checkTitle":"Message (သို့) Mail များကို လုံခြုံစေရန်စစ်ဆေးမည်။",
-   "checkPlaceHolder":"စစ်ဆေးလိုသော Message (သို့) Mail ကို ကူးထည့်ပါ"
+  "checkPlaceHolder":"စစ်ဆေးလိုသော Message (သို့) Mail ကို ကူးထည့်ပါ",
+  "login":"login ဝင်ရန်",
+  "register":"register လုပ်ရန်"
 }
