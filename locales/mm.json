@@ -12,5 +12,18 @@
   "checkTitle":"Message (သို့) Mail များကို လုံခြုံစေရန်စစ်ဆေးမည်။",
   "checkPlaceHolder":"စစ်ဆေးလိုသော Message (သို့) Mail ကို ကူးထည့်ပါ",
   "login":"login ဝင်ရန်",
-  "register":"register လုပ်ရန်"
+  "register":"register လုပ်ရန်",
+
+  "name":"နာမည်",
+  "phone":"ဖုန်းနံပါတ် (+95)",
+  "password":"စကားဝှက်",
+  "confirm_password":"စကားဝှက် ကို ထပ်မံရိုက်ပါ။",
+
+  "send_otp":"OTP code ယူမည်။",
+  "resend_otp":"OTP code ပြန်တောင်းမည်။",
+
+  "show":"👁 စကားဝှက် ကိုကြည့် မယ်။",
+  "hide":"🙈 စကားဝှက်ကို ကွယ်ထားမယ်"
+
+
 }

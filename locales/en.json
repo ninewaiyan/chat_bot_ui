@@ -12,6 +12,18 @@
   "checkTitle":"Phishing Link Checker",
   "checkPlaceHolder":"Paste email link here...",
   "login":"login",
-  "register":"register"
+  "register":"register",
+
+  "name":"Full Name",
+  "phone":"Phone Number (+95)",
+  "password":"Password",
+  "confirm_password":"Confirm Password",
+
+  "send_otp":"Send OTP",
+  "resend_otp":"Resend",
+  "show":"👁 Show",
+  "hide":"🙈 Hide"
+
+
 
 }
