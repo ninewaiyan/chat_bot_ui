@@ -29,7 +29,7 @@ export default function CheckPage() {
 // Header buttons: Dark mode toggle & Settings button
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Home",
+      headerTitle: "Checking",
       headerRight: () => (
         <View style={{ flexDirection: "row" }}>
           {/* Dark / Light Toggle */}

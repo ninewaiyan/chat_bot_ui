@@ -1,119 +1,104 @@
-import React, { useState } from 'react';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+// app/login.tsx
+import { useNavigation, useRouter } from "expo-router";
+import React, { useContext, useLayoutEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Button } from "react-native-paper";
+import { ThemeContext } from "../ThemeContext";
 
-export default function LoginScreen() {
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
-  const [step, setStep] = useState<'phone' | 'otp'>('phone');
-  const [loading, setLoading] = useState(false);
+export default function Login() {
+  const { scheme, toggle } = useContext(ThemeContext);
+  const isDark = scheme === "dark";
+  const router = useRouter();
+  const navigation = useNavigation();
 
-  const sendOtp = async () => {
-    if (phone.length < 8) {
-      Alert.alert('Invalid phone', 'Enter a valid phone number');
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+
+
+  const { t, i18n } = useTranslation();
+    const [language, setLanguage] = useState(i18n.language);
+  
+    const changeLanguage = async (lng: "en" | "mm") => {
+      await i18n.changeLanguage(lng);
+      setLanguage(lng);
+    };
+
+  // Header with theme toggle + settings button
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: "Login",
+      headerRight: () => (
+        <View style={{ flexDirection: "row", marginRight: 10 }}>
+          <TouchableOpacity onPress={toggle} style={styles.headerButton}>
+            <Text style={{ color: isDark ? "#fff" : "#000", fontSize: 20 }}>
+              {isDark ? "🌞" : "🌙"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/settings")} style={styles.headerButton}>
+            <Text style={{ color: isDark ? "#fff" : "#000", fontSize: 20 }}>⚙️</Text>
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, [navigation, toggle, isDark]);
+
+  const handleLogin = () => {
+    if (!phoneNumber || !password) {
+      setError("Please fill all fields");
       return;
     }
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    setStep('otp');
-    Alert.alert('OTP sent', 'Use 1234 as test OTP');
-  };
-
-  const verifyOtp = async () => {
-    if (otp !== '1234') {
-      Alert.alert('Invalid OTP', 'Try again');
-      return;
-    }
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    Alert.alert('Login Successful ✅');
+    console.log("📌 Login Data:", { phoneNumber, password });
+    alert("✅ Login success (check console)");
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'} />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.container}
-      >
-        <View style={styles.header}>
-          <Text style={styles.title}>Welcome 👋</Text>
-          <Text style={styles.subtitle}>Login with phone number</Text>
-        </View>
+    <View style={[styles.container, { backgroundColor: isDark ? "#121212" : "#fff" }]}>
+      <TextInput
+        style={[styles.input, { borderColor: isDark ? "#bbb" : "#333", color: isDark ? "#fff" : "#000" }]}
+        placeholder={t("phone")}
+        placeholderTextColor={isDark ? "#aaa" : "#555"}
+        keyboardType="phone-pad"
+        value={phoneNumber}
+        onChangeText={setPhoneNumber}
+      />
 
-        <View style={styles.form}>
-          {step === 'phone' && (
-            <>
-              <Text style={styles.label}>Phone Number</Text>
-              <TextInput
-                value={phone}
-                onChangeText={setPhone}
-                placeholder="09xxxxxxxx"
-                keyboardType="phone-pad"
-                style={styles.input}
-              />
-              <TouchableOpacity style={styles.button} onPress={sendOtp} disabled={loading}>
-                <Text style={styles.buttonText}>{loading ? 'Sending…' : 'Send OTP'}</Text>
-              </TouchableOpacity>
-            </>
-          )}
+      <TextInput
+        style={[styles.input, { borderColor: isDark ? "#bbb" : "#333", color: isDark ? "#fff" : "#000" }]}
+        placeholder= {t("password")}
+        placeholderTextColor={isDark ? "#aaa" : "#555"}
+        secureTextEntry={!showPassword}
+        value={password}
+        onChangeText={setPassword}
+      />
+      <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+        <Text style={{ color: isDark ? "#4da6ff" : "#007bff", marginBottom: 10 }}>
+          {showPassword ? t("hide"): t("show")}
+        </Text>
+      </TouchableOpacity>
 
-          {step === 'otp' && (
-            <>
-              <Text style={styles.label}>Enter OTP</Text>
-              <TextInput
-                value={otp}
-                onChangeText={setOtp}
-                placeholder="1234"
-                keyboardType="number-pad"
-                style={styles.input}
-              />
-              <TouchableOpacity style={styles.button} onPress={verifyOtp} disabled={loading}>
-                <Text style={styles.buttonText}>{loading ? 'Verifying…' : 'Verify OTP'}</Text>
-              </TouchableOpacity>
-            </>
-          )}
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      <TouchableOpacity onPress={() => router.push("/forgetpassword")}>
+        <Text style={{ color: isDark ? "#4da6ff" : "#007bff", marginBottom: 15 }}>{t("forgot_password")}</Text>
+      </TouchableOpacity>
+
+      <Button mode="contained" onPress={handleLogin} style={styles.button} disabled={!phoneNumber || !password}>
+        {t("login")}
+      </Button>
+
+      <Button mode="outlined" onPress={() => router.push("/register")} style={styles.button}>
+        {t("register")}
+      </Button>
+
+      {error ? <Text style={{ color: "red", marginTop: 10 }}>{error}</Text> : null}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#0f172a' },
-  container: { flex: 1, padding: 20, gap: 16 },
-  header: { marginTop: 12 },
-  title: { fontSize: 28, fontWeight: '800', color: 'white' },
-  subtitle: { fontSize: 16, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
-  form: { backgroundColor: 'white', borderRadius: 16, padding: 16, gap: 12 },
-  label: { fontSize: 14, fontWeight: '600', color: '#0f172a' },
-  input: {
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: Platform.select({ ios: 12, android: 10 }),
-    fontSize: 16,
-    backgroundColor: 'white',
-  },
-  button: {
-    marginTop: 16,
-    backgroundColor: '#2563eb',
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  buttonText: { color: 'white', fontSize: 16, fontWeight: '700' },
+  container: { flex: 1, justifyContent: "center", padding: 20 },
+  headerButton: { marginLeft: 15 },
+  input: { borderWidth: 1, borderRadius: 8, padding: 12, marginBottom: 10, fontSize: 16 },
+  button: { marginBottom: 15 },
 });

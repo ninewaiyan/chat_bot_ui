@@ -239,7 +239,7 @@ export default function Register() {
                 {t("backHome")}
             </Button>
 
-            <Button mode="outlined" onPress={() => router.push("/")} style={styles.button}>
+            <Button mode="outlined" onPress={() => router.push("/login")} style={styles.button}>
         
             {t("login")}
             </Button>
