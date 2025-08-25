@@ -1,8 +1,8 @@
 // i18n.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Localization from "expo-localization";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import * as RNLocalize from "react-native-localize";
 
 import en from "./locales/en.json";
 import mm from "./locales/mm.json";
@@ -23,7 +23,8 @@ const languageDetector: any = {
         if (saved) {
           cb(saved);
         } else {
-          const locales = RNLocalize.getLocales();
+          // ✅ Use expo-localization instead of RNLocalize
+          const locales = Localization.getLocales();
           const deviceLng = locales[0]?.languageCode || "en";
           cb(deviceLng.startsWith("my") ? "mm" : deviceLng);
         }
@@ -45,16 +46,12 @@ i18n
   .use(languageDetector)
   .use(initReactI18next)
   .init({
-    // 👇 fix compatibility
-    compatibilityJSON: "v4", 
-
-    // 👇 keep translations
+    compatibilityJSON: "v4",
     resources,
     fallbackLng: "en",
     supportedLngs: ["en", "mm"],
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
-  } as any); // 👈 quick fix for TS typing
-
+  } as any);
 
 export default i18n;

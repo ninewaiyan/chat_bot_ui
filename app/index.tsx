@@ -1,104 +1,37 @@
-// app/index.tsx
-import { useNavigation, useRouter } from "expo-router";
-import React, { useContext, useLayoutEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-paper";
-import { ThemeContext } from "../ThemeContext";
+// app/splash.tsx
+import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
+import React, { useEffect, useLayoutEffect } from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
 
-export default function Home() {
+export default function Splash() {
   const router = useRouter();
-  const { scheme, toggle } = useContext(ThemeContext);
   const navigation = useNavigation();
 
-  const isDark = scheme === "dark";
-
-  const { t, i18n } = useTranslation();
-  const [language, setLanguage] = useState(i18n.language);
-
-  const changeLanguage = async (lng: "en" | "mm") => {
-    await i18n.changeLanguage(lng);
-    setLanguage(lng);
-  };
-
-  // Header buttons: Dark mode toggle & Settings button
+  // Hide header
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: "Home",
-      headerRight: () => (
-        <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity onPress={toggle} style={styles.headerButton}>
-            <Text style={{ color: isDark ? "#fff" : "#000", fontSize: 20 }}>
-              {isDark ? "🌞" : "🌙"}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => router.push("/settings")}
-            style={styles.headerButton}
-          >
-            <Text style={{ color: isDark ? "#fff" : "#000", fontSize: 20 }}>
-              ⚙️
-            </Text>
-          </TouchableOpacity>
-        </View>
-      ),
-    });
-  }, [navigation, toggle, isDark]);
+    navigation.setOptions({ headerShown: false });
+  }, [navigation]);
 
-  // 🎨 Theme colors
-  const colors = {
-    background: scheme === "dark" ? "#0f172a" : "#f8fafc",
-    text: scheme === "dark" ? "white" : "#0f172a",
-    subtitle: scheme === "dark" ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.7)",
-    primary: "#7c3aed",
-    secondary: scheme === "dark" ? "white" : "#0f172a",
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.replace("/login");
+    }, 5000); // 5 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Top Section (Title + Subtitle) */}
-      <View style={styles.topSection}>
-        <Text style={[styles.title, { color: colors.text }]}>Chatbot</Text>
-        <Text style={[styles.subtitle, { color: colors.subtitle }]}>
-          Chat For Your Privacy
-        </Text>
+    <View style={styles.container}>
+      <View style={styles.logoContainer}>
+        <Image
+          source={require("../assets/images/image.png")} // replace with your logo
+          style={styles.logo}
+        />
       </View>
-
-      {/* Middle Section (Chat + Check Buttons) */}
-      <View style={styles.middleSection}>
-        <Pressable
-          style={[styles.button, { backgroundColor: colors.primary }]}
-          onPress={() => router.push("/chat")}
-        >
-          <Text style={styles.buttonText}>{t("chat")}</Text>
-        </Pressable>
-        <Pressable
-          style={[styles.button, { backgroundColor: colors.primary }]}
-          onPress={() => router.push("/check")}
-        >
-          <Text style={styles.buttonText}>{t("check")}</Text>
-        </Pressable>
-      </View>
-
-      {/* Bottom Section (Login + Register Buttons) */}
-      <View style={styles.bottomSection}>
-        <Pressable
-          style={[styles.loginButton, { borderColor: colors.primary }]}
-          onPress={() => router.push("/login")}
-        >
-          <Text style={[styles.loginText, { color: colors.primary }]}>
-            {t("login")}
-          </Text>
-        </Pressable>
-        <Pressable
-          style={[styles.registerButton, { backgroundColor: colors.primary }]}
-          onPress={() => router.push("/register")}
-        >
-          <Text style={[styles.registerText, { color: "white" }]}>
-            {t("register")}
-          </Text>
-        </Pressable>
-      </View>
+      <Text style={styles.appName}>ChatAi</Text>
+      <Text style={styles.subtitle}>Developed by HMI Team</Text>
+       <Text style={styles.tagline}>Cyber Guard For Myanmar Citizen</Text>
     </View>
   );
 }
@@ -106,76 +39,37 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
-  },
-  topSection: {
-    flex: 1,
+    backgroundColor: "#121212", // dark background
     justifyContent: "center",
     alignItems: "center",
   },
-  middleSection: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  logoContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    overflow: "hidden",
+    marginBottom: 20,
   },
-  bottomSection: {
-    flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
-    marginBottom: 40,
+  logo: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
-  title: {
-    fontSize: 28,
-    fontWeight: "800",
-    marginBottom: 8,
+  appName: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 5,
   },
   subtitle: {
+    fontSize: 16,
+    color: "#aaa",
+  },
+
+  tagline: {
     fontSize: 14,
-    marginBottom: 24,
-  },
-  button: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 24,
-    shadowColor: "#7c3aed",
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 3,
-    marginBottom: 8,
-    width: "60%",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  loginButton: {
-    borderWidth: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 24,
-    marginBottom: 8,
-    width: "60%",
-    alignItems: "center",
-  },
-  loginText: {
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  registerButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 24,
-    width: "60%",
-    alignItems: "center",
-  },
-  registerText: {
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  headerButton: {
-    marginRight: 12,
+    color: "#ccc",
+    marginTop: 5,
+    fontStyle: "italic",
   },
 });

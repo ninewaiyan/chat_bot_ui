@@ -1,10 +1,29 @@
 // app/forgetpassword.tsx
 import { auth } from "@/firebaseConfig";
 import { useNavigation, useRouter } from "expo-router";
-import { ConfirmationResult, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import React, { useContext, useEffect, useLayoutEffect, useRef, useState, useTransition } from "react";
+import {
+  ConfirmationResult,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+} from "firebase/auth";
+import React, {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { useTranslation } from "react-i18next";
-import { Keyboard, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Keyboard,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Button } from "react-native-paper";
 import { ThemeContext } from "../ThemeContext";
 
@@ -32,15 +51,13 @@ export default function ForgetPassword() {
 
   const otpInputs = useRef<TextInput[]>([]);
 
+  const { t, i18n } = useTranslation();
+  const [language, setLanguage] = useState(i18n.language);
 
-  
-    const { t, i18n } = useTranslation();
-      const [language, setLanguage] = useState(i18n.language);
-    
-      const changeLanguage = async (lng: "en" | "mm") => {
-        await i18n.changeLanguage(lng);
-        setLanguage(lng);
-      };
+  const changeLanguage = async (lng: "en" | "mm") => {
+    await i18n.changeLanguage(lng);
+    setLanguage(lng);
+  };
 
   // HEADER
   useLayoutEffect(() => {
@@ -67,11 +84,15 @@ export default function ForgetPassword() {
     return () => clearTimeout(timer);
   }, [resendCountdown]);
 
-  // Recaptcha setup
+  // Recaptcha setup (Web only)
   useEffect(() => {
-    const verifier = new RecaptchaVerifier(auth, "recaptcha-container", { size: "invisible" });
-    setRecaptchaVerifier(verifier);
-    return () => verifier.clear();
+    if (Platform.OS === "web") {
+      const verifier = new RecaptchaVerifier(auth, "recaptcha-container", { size: "invisible" });
+      setRecaptchaVerifier(verifier);
+      return () => verifier.clear();
+    } else {
+      setRecaptchaVerifier(null);
+    }
   }, []);
 
   // Auto verify OTP
@@ -86,6 +107,12 @@ export default function ForgetPassword() {
     setResendCountdown(60);
     setError("");
     setOtpVerified(false);
+
+    if (Platform.OS !== "web") {
+      setError("OTP not supported on Expo Go iOS. Use Web to test.");
+      return;
+    }
+
     startTransition(async () => {
       if (!recaptchaVerifier) return setError("Recaptcha not ready");
       try {
@@ -95,9 +122,7 @@ export default function ForgetPassword() {
       } catch (err: any) {
         console.log(err);
         setResendCountdown(0);
-        if (err.code === "auth/invalid-phone-number") setError("Invalid phone number.");
-        else if (err.code === "auth/too-many-requests") setError("Too many requests. Try later.");
-        else setError("Failed to send OTP. Try again.");
+        setError(err.message || "Failed to send OTP");
       }
     });
   };
@@ -139,19 +164,26 @@ export default function ForgetPassword() {
       const newOtpArr = [...otp];
       newOtpArr[index] = value;
       setOtp(newOtpArr);
-      if (value && index < 5) otpInputs.current[index + 1].focus();
-      else if (!value && index > 0) otpInputs.current[index - 1].focus();
+      if (value && index < 5) otpInputs.current[index + 1]?.focus();
+      else if (!value && index > 0) otpInputs.current[index - 1]?.focus();
     }
   };
 
-  const allFieldsFilled = () =>
-    otpVerified && newPassword && confirmPassword;
+  const allFieldsFilled = () => otpVerified && newPassword && confirmPassword;
 
   return (
     <View style={[styles.container, { backgroundColor: isDark ? "#121212" : "#fff" }]}>
-      {/* Phone number */}
       {!otpVerified && (
         <>
+
+
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: isDark ? "#fff" : "#000" }]}>{t("fp_title")}</Text>
+            <Text style={[styles.subtitle, { color: isDark ? "#aaa" : "#555" }]}>
+
+            </Text>
+          </View>
+
           <TextInput
             style={[styles.input, { borderColor: isDark ? "#bbb" : "#333", color: isDark ? "#fff" : "#000" }]}
             placeholder={t("phone")}
@@ -171,7 +203,6 @@ export default function ForgetPassword() {
         </>
       )}
 
-      {/* OTP input */}
       {!otpVerified && confirmationResult && (
         <View style={styles.otpContainer}>
           {otp.map((digit, idx) => (
@@ -190,9 +221,17 @@ export default function ForgetPassword() {
         </View>
       )}
 
-      {/* New Password */}
       {otpVerified && (
         <>
+
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: isDark ? "#fff" : "#000" }]}>{t("reset_password")}</Text>
+            <Text style={[styles.subtitle, { color: isDark ? "#aaa" : "#555" }]}>
+
+            </Text>
+          </View>
+
+
           <TextInput
             style={[styles.input, { borderColor: isDark ? "#bbb" : "#333", color: isDark ? "#fff" : "#000" }]}
             placeholder={t("new_password")}
@@ -250,4 +289,7 @@ const styles = StyleSheet.create({
   button: { marginBottom: 15 },
   otpContainer: { flexDirection: "row", justifyContent: "space-between", marginBottom: 15 },
   otpBox: { borderWidth: 1, borderRadius: 8, padding: Platform.OS === "ios" ? 15 : 12, fontSize: 18, width: 45 },
+  subtitle: { fontSize: 16 },
+  header: { marginBottom: 30, alignItems: "center" },
+  title: { fontSize: 28, fontWeight: "bold", marginBottom: 5 },
 });

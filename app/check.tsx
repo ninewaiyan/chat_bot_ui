@@ -16,17 +16,15 @@ export default function CheckPage() {
 
   const navigation = useNavigation();
 
+  const { t, i18n } = useTranslation();
+  const [language, setLanguage] = useState(i18n.language);
 
-      const { t, i18n } = useTranslation();
-        const [language, setLanguage] = useState(i18n.language);
-      
-        const changeLanguage = async (lng: "en" | "mm") => {
-          await i18n.changeLanguage(lng); // persisted by languageDetector.cacheUserLanguage
-          setLanguage(lng);
-        };
-  
+  const changeLanguage = async (lng: "en" | "mm") => {
+    await i18n.changeLanguage(lng);
+    setLanguage(lng);
+  };
 
-// Header buttons: Dark mode toggle & Settings button
+  // Header buttons: Dark mode toggle & Settings button
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "Checking",
@@ -39,13 +37,8 @@ export default function CheckPage() {
             </Text>
           </TouchableOpacity>
           {/* Settings Button */}
-          <TouchableOpacity
-            onPress={() => router.push("/settings")}
-            style={styles.headerButton}
-          >
-            <Text style={{ color: isDark ? "#fff" : "#000", fontSize: 20 }}>
-              ⚙️
-            </Text>
+          <TouchableOpacity onPress={() => router.push("/settings")} style={styles.headerButton}>
+            <Text style={{ color: isDark ? "#fff" : "#000", fontSize: 20 }}>⚙️</Text>
           </TouchableOpacity>
         </View>
       ),
@@ -70,20 +63,38 @@ export default function CheckPage() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? "#0f172a" : "#f9fafb" }]}>
-      <Text style={[styles.title, { color: isDark ? "white" : "black" }]}>
-       {t("checkTitle")}
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: isDark ? "#121212" : "#f9fafb" },
+      ]}
+    >
+      <Text style={[styles.title, { color: isDark ? "#f8fafc" : "#111827" }]}>
+        {t("checkTitle")}
       </Text>
 
       <TextInput
-        style={[styles.input, { backgroundColor: isDark ? "#1e293b" : "white", color: isDark ? "white" : "black" }]}
+        style={[
+          styles.input,
+          {
+            backgroundColor: isDark ? "#1e293b" : "#ffffff",
+            color: isDark ? "#f8fafc" : "#111827",
+            borderColor: isDark ? "#334155" : "#d1d5db",
+          },
+        ]}
         placeholder={t("checkPlaceHolder")}
-        placeholderTextColor={isDark ? "#94a3b8" : "#888"}
+        placeholderTextColor={isDark ? "#94a3b8" : "#9ca3af"}
         value={link}
         onChangeText={setLink}
       />
 
-      <Pressable style={styles.button} onPress={checkPhishing}>
+      <Pressable
+        style={[
+          styles.button,
+          { backgroundColor: isDark ? "#6366f1" : "#7c3aed" },
+        ]}
+        onPress={checkPhishing}
+      >
         <Text style={styles.buttonText}>{t("check")}</Text>
       </Pressable>
 
@@ -92,10 +103,10 @@ export default function CheckPage() {
           style={[
             styles.resultBox,
             result.type === "phish"
-              ? { backgroundColor: "#dc2626" } // red
+              ? { backgroundColor: isDark ? "#b91c1c" : "#dc2626" } // dark red vs light red
               : result.type === "safe"
-              ? { backgroundColor: "#16a34a" } // green
-              : { backgroundColor: "#facc15" }, // yellow for error
+              ? { backgroundColor: isDark ? "#15803d" : "#16a34a" } // dark green vs light green
+              : { backgroundColor: isDark ? "#ca8a04" : "#facc15" }, // dark yellow vs light yellow
           ]}
         >
           <Text style={styles.resultText}>{result.message}</Text>
@@ -123,18 +134,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#ccc",
   },
   button: {
-    backgroundColor: "#7c3aed",
     paddingVertical: 14,
     borderRadius: 24,
     alignItems: "center",
-    shadowColor: "#7c3aed",
     shadowOpacity: 0.3,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 4 },
     elevation: 3,
+    marginTop: 4,
   },
   buttonText: {
     color: "white",

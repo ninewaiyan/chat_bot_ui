@@ -29,5 +29,16 @@
   "forgot_password": "Forgot password?",
   "update": "Update",
   "change":"Change",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+
+  "home":"Home",
+  "welcome":"Welcome",
+  "login_title":"Login With Phone Number",
+  "register_title":"Register With Phone Number",
+  "info":"Register Information",
+  "tip_title":"Daily Cyber Security Tip",
+  "fp_title":" Enter register phone number  and Get OTP code to reset your password.",
+  "learn_more":"Learn More"
+  
+  
 }

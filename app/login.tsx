@@ -56,6 +56,15 @@ export default function Login() {
 
   return (
     <View style={[styles.container, { backgroundColor: isDark ? "#121212" : "#fff" }]}>
+
+           {/* --- Welcome Title --- */}
+      <View style={styles.header}>
+        <Text style={[styles.title, { color: isDark ? "#fff" : "#000" }]}>{t("welcome")}</Text>
+        <Text style={[styles.subtitle, { color: isDark ? "#aaa" : "#555" }]}>
+          {t("login_title")}
+        </Text>
+      </View>
+
       <TextInput
         style={[styles.input, { borderColor: isDark ? "#bbb" : "#333", color: isDark ? "#fff" : "#000" }]}
         placeholder={t("phone")}
@@ -87,9 +96,15 @@ export default function Login() {
         {t("login")}
       </Button>
 
+      <Button mode="outlined" onPress={() => router.push("/home")} style={styles.button}>
+        {t("home")}
+      </Button>
+
       <Button mode="outlined" onPress={() => router.push("/register")} style={styles.button}>
         {t("register")}
       </Button>
+
+   
 
       {error ? <Text style={{ color: "red", marginTop: 10 }}>{error}</Text> : null}
     </View>
@@ -101,4 +116,7 @@ const styles = StyleSheet.create({
   headerButton: { marginLeft: 15 },
   input: { borderWidth: 1, borderRadius: 8, padding: 12, marginBottom: 10, fontSize: 16 },
   button: { marginBottom: 15 },
+  subtitle: { fontSize: 16 },
+  header: { marginBottom: 40, alignItems: "center" },
+  title: { fontSize: 28, fontWeight: "bold", marginBottom: 5 },
 });
