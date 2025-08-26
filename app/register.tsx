@@ -330,6 +330,7 @@ import { useTranslation } from "react-i18next";
 import {
     Keyboard,
     Platform,
+    Pressable,
     StyleSheet,
     Text,
     TextInput,
@@ -509,14 +510,29 @@ export default function Register() {
                         keyboardType="phone-pad"
                         onChangeText={setPhoneNumber}
                     />
-                    <Button
+                    {/* <Button
                         style={styles.button}
                         mode="contained"
                         onPress={requestOtp}
                         disabled={!isPhoneValid() || resendCountdown > 0}
                     >
                         {resendCountdown > 0 ? `${t("resend_otp")} ${resendCountdown}s` : t("send_otp")}
-                    </Button>
+                    </Button> */}
+
+                    <Pressable
+                        onPress={requestOtp}
+                        style={[
+                            styles.button,
+                            (!isPhoneValid() || resendCountdown > 0) && styles.buttonDisabled,
+                        ]}
+                        disabled={!isPhoneValid() || resendCountdown > 0}
+                    >
+                        <Text style={styles.buttonText}>
+                            {resendCountdown > 0
+                                ? `${t("resend_otp")} ${resendCountdown}s`
+                                : t("send_otp")}
+                        </Text>
+                    </Pressable>
                 </>
             )}
 
@@ -588,12 +604,30 @@ export default function Register() {
             )}
 
             {/* Navigation */}
-            <Button mode="outlined" onPress={() => router.push("/home")} style={styles.button}>
+            {/* <Button mode="outlined" onPress={() => router.push("/home")} style={styles.button}>
                 {t("home")}
             </Button>
             <Button mode="outlined" onPress={() => router.push("/login")} style={styles.button}>
                 {t("login")}
-            </Button>
+            </Button> */}
+
+
+            {/* Home button */}
+            <Pressable
+                onPress={() => router.push("/home")}
+                style={styles.button}
+            >
+                <Text style={styles.buttonText}>{t("home")}</Text>
+            </Pressable>
+
+            {/* login button */}
+            <Pressable
+                onPress={() => router.push("/login")}
+                style={styles.button}
+            >
+                <Text style={styles.buttonText}>{t("login")}</Text>
+            </Pressable>
+
 
             {error ? <Text style={{ color: "red", marginTop: 10 }}>{error}</Text> : null}
             {success ? <Text style={{ color: "green", marginTop: 10 }}>{success}</Text> : null}
@@ -605,10 +639,30 @@ const styles = StyleSheet.create({
     container: { flex: 1, justifyContent: "center", padding: 20 },
     headerButton: { marginLeft: 15 },
     input: { borderWidth: 1, borderRadius: 8, padding: 12, marginBottom: 15, fontSize: 16 },
-    button: { marginBottom: 4 },
     otpContainer: { flexDirection: "row", justifyContent: "space-between", marginBottom: 15 },
     otpBox: { borderWidth: 1, borderRadius: 8, padding: Platform.OS === "ios" ? 15 : 12, fontSize: 18, width: 45 },
     subtitle: { fontSize: 16 },
     header: { marginBottom: 40, alignItems: "center" },
     title: { fontSize: 28, fontWeight: "bold", marginBottom: 5 },
+
+    button: {
+        borderWidth: 1,
+        borderColor: "#2196F3",
+        backgroundColor: "transparent",
+        paddingVertical: 8,   // 🔹 smaller height
+        paddingHorizontal: 20,
+        marginBottom: 15,
+        borderRadius: 40,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    buttonDisabled: {
+        borderColor: "#ccc",
+        opacity: 0.6,
+    },
+    buttonText: {
+        color: "#2196F3",
+        fontSize: 16,
+        fontWeight: "500",
+    },
 });

@@ -2,8 +2,8 @@
 import { useRouter } from "expo-router";
 import React, { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Button, Modal, Portal, Provider, Switch, TextInput } from "react-native-paper";
+import { Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Portal, Provider, Switch, TextInput } from "react-native-paper";
 import { ThemeContext } from "../ThemeContext";
 
 export default function Settings() {
@@ -95,19 +95,29 @@ export default function Settings() {
           <View style={styles.userSection}>
             {editingName ? (
               <View style={{ width: "100%" }}>
+                {/* <TextInput
+                  label={t("name")}
+                  value={userName}
+                  onChangeText={setUserName}
+                  style={{ marginBottom: 0, backgroundColor: "transparent" }}
+                /> */}
+
                 <TextInput
                   label={t("name")}
                   value={userName}
                   onChangeText={setUserName}
-                  style={{ marginBottom: 5, backgroundColor: "transparent" }}
+                  style={{ backgroundColor: "transparent", marginBottom: 0 }}
+                  contentStyle={{ height: 40 }} // reduces internal height
+                  dense={true}                 // reduces padding for a compact look
                 />
-                <Button
+
+                {/* <Button
                   mode="contained"
                   onPress={handleUpdateName}
                   style={{ marginBottom: 5 }}
                   disabled={!userName.trim() || userName === previousName} // disable if empty or unchanged
                 >
-                 {t("update")}
+                  {t("update")}
                 </Button>
                 <Button
                   mode="text"
@@ -117,7 +127,45 @@ export default function Settings() {
                   }}
                 >
                   {t("cancel")}
-                </Button>
+                </Button> */}
+
+
+                <Pressable
+                  onPress={handleUpdateName}
+                  disabled={!userName.trim() || userName === previousName}
+                  style={{
+                    backgroundColor:
+                      !userName.trim() || userName === previousName ? "#e2c0ffff" : "#a16fecef", // lighter pink if disabled
+                    paddingVertical: 12,
+                    paddingHorizontal: 20,
+                    borderRadius: 8,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: 5,
+                    opacity: !userName.trim() || userName === previousName ? 0.6 : 1,
+                  }}
+                >
+                  <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>
+                    {t("update")}
+                  </Text>
+                </Pressable>
+
+                {/* Cancel button */}
+                <Pressable
+                  onPress={() => {
+                    setUserName(previousName); // revert
+                    setEditingName(false);
+                  }}
+                  style={{
+                    marginTop: 5,
+                    paddingVertical: 10,
+                    alignItems: "center",
+                  }}
+                >
+                  <Text style={{ color: "#f069ffff", fontSize: 16, fontWeight: "500" }}>
+                    {t("cancel")}
+                  </Text>
+                </Pressable>
               </View>
             ) : (
               <TouchableOpacity onPress={() => setEditingName(true)} style={{ alignItems: "center" }}>
@@ -148,7 +196,7 @@ export default function Settings() {
         <View style={styles.row}>
           <Text style={{ color: isDark ? "#fff" : "#000", fontSize: 18 }}>{t("language")}</Text>
           <View style={{ flexDirection: "row", gap: 10 }}>
-            <Button
+            {/* <Button
               mode={language.startsWith("en") ? "contained" : "outlined"}
               onPress={() => changeLanguage("en")}
             >
@@ -159,24 +207,99 @@ export default function Settings() {
               onPress={() => changeLanguage("mm")}
             >
               {t("myanmar")}
-            </Button>
+            </Button> */}
+
+            {/* English Button */}
+            <Pressable
+              onPress={() => changeLanguage("en")}
+              style={{
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 8,
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 10,
+                backgroundColor: language.startsWith("en") ? "#d269ffff" : "transparent",
+                borderWidth: language.startsWith("en") ? 0 : 1,
+                borderColor: "#dc69ffff",
+              }}
+            >
+              <Text
+                style={{
+                  color: language.startsWith("en") ? "#fff" : "#dc69ffff",
+                  fontSize: 16,
+                  fontWeight: "500",
+                }}
+              >
+                {t("english")}
+              </Text>
+            </Pressable>
+
+            {/* Myanmar Button */}
+            <Pressable
+              onPress={() => changeLanguage("mm")}
+              style={{
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 8,
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 10,
+                backgroundColor:
+                  language.startsWith("mm") || language.startsWith("my") ? "#d269ffff" : "transparent",
+                borderWidth:
+                  language.startsWith("mm") || language.startsWith("my") ? 0 : 1,
+                borderColor: "#dc69ffff",
+              }}
+            >
+              <Text
+                style={{
+                  color:
+                    language.startsWith("mm") || language.startsWith("my") ? "#fff" : "#df69ffff",
+                  fontSize: 16,
+                  fontWeight: "500",
+                }}
+              >
+                {t("myanmar")}
+              </Text>
+            </Pressable>
           </View>
         </View>
 
         {/* Change Password Button */}
-        <Button mode="contained" onPress={showModal} style={{ marginBottom: 10 }}>
+        {/* <Button mode="contained" onPress={showModal} style={{ marginBottom: 10 }}>
           {t("change_password")}
-        </Button>
+        </Button> */}
 
         {/* Logout */}
-        <Button mode="contained" onPress={handleLogout} style={{ marginBottom: 10 }}>
+        {/* <Button mode="contained" onPress={handleLogout} style={{ marginBottom: 10 }}>
           {t("logout")}
-        </Button>
+        </Button> */}
 
-        <Button mode="contained" onPress={() => router.push("/")}>
+        {/* <Button mode="contained" onPress={() => router.push("/")}>
           {t("backHome")}
-        </Button>
+        </Button> */}
 
+
+
+        {/* Logout */}
+        {/* Change Password */}
+        <Pressable style={styles.pinkButton} onPress={showModal}>
+          <Text style={styles.pinkButtonText}>{t("change_password")}</Text>
+        </Pressable>
+
+        {/* Logout */}
+        <Pressable style={styles.pinkButton} onPress={handleLogout}>
+          <Text style={styles.pinkButtonText}>{t("logout")}</Text>
+        </Pressable>
+
+        {/* Back Home */}
+        <Pressable
+          style={styles.pinkButton}
+          onPress={() => router.push("/home")}
+        >
+          <Text style={styles.pinkButtonText}>{t("backHome")}</Text>
+        </Pressable>
         {/* --- Modal for Change Password --- */}
         <Portal>
           <Modal
@@ -210,7 +333,7 @@ export default function Settings() {
             </Text>
 
             <TextInput
-              label= {t("confirm_password")}
+              label={t("confirm_password")}
               value={confirmPassword}
               secureTextEntry={!showConfirm}
               onChangeText={setConfirmPassword}
@@ -221,7 +344,7 @@ export default function Settings() {
             {passwordError ? <Text style={{ color: "red", marginBottom: 10 }}>{passwordError}</Text> : null}
             {success ? <Text style={{ color: "green", marginBottom: 10 }}>{success}</Text> : null}
 
-            <Button
+            {/* <Button
               mode="contained"
               onPress={handleChangePassword}
               disabled={passwordStrength(newPassword) !== "Strong 🔵" || newPassword !== confirmPassword}
@@ -230,7 +353,52 @@ export default function Settings() {
             </Button>
             <Button mode="text" onPress={hideModal} style={{ marginTop: 10 }}>
               {t("cancel")}
-            </Button>
+            </Button> */}
+
+
+
+            <Pressable
+              onPress={handleChangePassword}
+              disabled={
+                passwordStrength(newPassword) !== "Strong 🔵" ||
+                newPassword !== confirmPassword
+              }
+              style={{
+                backgroundColor:
+                  passwordStrength(newPassword) === "Strong 🔵" &&
+                    newPassword === confirmPassword
+                    ? "#FF69B4"
+                    : "#FFC0CB", // lighter pink when disabled
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+                borderRadius: 8,
+                alignItems: "center",
+                justifyContent: "center",
+                opacity:
+                  passwordStrength(newPassword) === "Strong 🔵" &&
+                    newPassword === confirmPassword
+                    ? 1
+                    : 0.6, // reduce opacity when disabled
+              }}
+            >
+              <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>
+                {t("change")}
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={hideModal}
+              style={{
+                marginTop: 10,
+                paddingVertical: 10,
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: "#FF69B4", fontSize: 16, fontWeight: "500" }}>
+                {t("cancel")}
+              </Text>
+            </Pressable>
+
           </Modal>
         </Portal>
       </View>
@@ -246,4 +414,19 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
   modalContainer: { padding: 20, margin: 20, borderRadius: 12 },
   input: { marginBottom: 10, backgroundColor: "transparent" },
+
+  pinkButton: {
+    backgroundColor: "#a46adbff", // solid pink
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    marginBottom: 10,
+    borderRadius: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pinkButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "500",
+  },
 });

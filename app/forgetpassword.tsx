@@ -312,13 +312,13 @@ import { useTranslation } from "react-i18next";
 import {
   Keyboard,
   Platform,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { Button } from "react-native-paper";
 import { ThemeContext } from "../ThemeContext";
 
 const TEST_PHONE = "+959963603477";
@@ -480,7 +480,7 @@ export default function ForgetPassword() {
             value={phoneNumber}
             onChangeText={setPhoneNumber}
           />
-          <Button
+          {/* <Button
             mode="contained"
             onPress={requestOtp}
             disabled={!isPhoneValid() || resendCountdown > 0}
@@ -489,7 +489,29 @@ export default function ForgetPassword() {
             {resendCountdown > 0
               ? t("resend_otp") + ` ${resendCountdown}s`
               : t("send_otp")}
-          </Button>
+          </Button> */}
+
+          <Pressable
+            onPress={requestOtp}
+            disabled={!isPhoneValid() || resendCountdown > 0}
+            style={{
+              backgroundColor:
+                !isPhoneValid() || resendCountdown > 0 ? "#FFC0CB" : "#FF69B4", // lighter pink if disabled
+              paddingVertical: 12,
+              paddingHorizontal: 20,
+              borderRadius: 8,
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: 15,
+              opacity: !isPhoneValid() || resendCountdown > 0 ? 0.6 : 1,
+            }}
+          >
+            <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>
+              {resendCountdown > 0
+                ? `${t("resend_otp")} ${resendCountdown}s`
+                : t("send_otp")}
+            </Text>
+          </Pressable>
         </>
       )}
 
@@ -557,8 +579,8 @@ export default function ForgetPassword() {
                 passwordStrength() === "Strong"
                   ? "green"
                   : passwordStrength() === "Medium"
-                  ? "orange"
-                  : "red",
+                    ? "orange"
+                    : "red",
               marginBottom: 10,
             }}
           >
@@ -580,14 +602,33 @@ export default function ForgetPassword() {
             onChangeText={setConfirmPassword}
           />
 
-          <Button
+          {/* <Button
             mode="contained"
             onPress={handleResetPassword}
             disabled={!allFieldsFilled()}
             style={styles.button}
           >
             {t("reset_password")}
-          </Button>
+          </Button> */}
+
+          <Pressable
+            onPress={handleResetPassword}
+            disabled={!allFieldsFilled()}
+            style={{
+              backgroundColor: !allFieldsFilled() ? "#ebc0ffff" : "#c669ffff", // lighter pink if disabled
+              paddingVertical: 12,
+              paddingHorizontal: 20,
+              borderRadius: 8,
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: 15,
+              opacity: !allFieldsFilled() ? 0.6 : 1,
+            }}
+          >
+            <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>
+              {t("reset_password")}
+            </Text>
+          </Pressable>
         </>
       )}
 

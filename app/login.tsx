@@ -2,8 +2,7 @@
 import { useNavigation, useRouter } from "expo-router";
 import React, { useContext, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { Button } from "react-native-paper";
+import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { ThemeContext } from "../ThemeContext";
 
 export default function Login() {
@@ -92,7 +91,7 @@ export default function Login() {
         <Text style={{ color: isDark ? "#4da6ff" : "#007bff", marginBottom: 15 }}>{t("forgot_password")}</Text>
       </TouchableOpacity>
 
-      <Button mode="contained" onPress={handleLogin} style={styles.button} disabled={!phoneNumber || !password}>
+      {/* <Button mode="contained" onPress={handleLogin} style={styles.button} disabled={!phoneNumber || !password}>
         {t("login")}
       </Button>
 
@@ -102,8 +101,37 @@ export default function Login() {
 
       <Button mode="outlined" onPress={() => router.push("/register")} style={styles.button}>
         {t("register")}
-      </Button>
+      </Button> */}
 
+
+      
+<Pressable
+        onPress={handleLogin}
+        style={[
+          styles.button,
+          !phoneNumber || !password ? styles.buttonDisabled : {},
+        ]}
+        disabled={!phoneNumber || !password}
+      >
+        <Text style={styles.buttonText}>{t("login")}</Text>
+      </Pressable>
+
+      {/* Home button */}
+      <Pressable
+        onPress={() => router.push("/home")}
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>{t("home")}</Text>
+      </Pressable>
+
+      {/* Register button */}
+      <Pressable
+        onPress={() => router.push("/register")}
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>{t("register")}</Text>
+      </Pressable>
+    
    
 
       {error ? <Text style={{ color: "red", marginTop: 10 }}>{error}</Text> : null}
@@ -115,8 +143,29 @@ const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", padding: 20 },
   headerButton: { marginLeft: 15 },
   input: { borderWidth: 1, borderRadius: 8, padding: 12, marginBottom: 10, fontSize: 16 },
-  button: { marginBottom: 15 },
+
   subtitle: { fontSize: 16 },
   header: { marginBottom: 40, alignItems: "center" },
   title: { fontSize: 28, fontWeight: "bold", marginBottom: 5 },
+
+button: {
+    borderWidth: 1,
+    borderColor: "#2196F3",
+    backgroundColor: "transparent",
+    paddingVertical: 8,   // 🔹 smaller height
+    paddingHorizontal: 20,
+    marginBottom: 15,
+    borderRadius: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonDisabled: {
+    borderColor: "#ccc",
+    opacity: 0.6,
+  },
+  buttonText: {
+    color: "#2196F3",
+    fontSize: 16,
+    fontWeight: "500",
+  },
 });
