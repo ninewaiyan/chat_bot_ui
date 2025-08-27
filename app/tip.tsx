@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "800",
     marginBottom: 20,
-    marginTop:50,
+    
     textAlign: "center",
   },
   tipCard: {

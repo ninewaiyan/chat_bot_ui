@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
 
   subtitle: { fontSize: 16 },
   header: { marginBottom: 40, alignItems: "center" },
-  title: { fontSize: 28, fontWeight: "bold", marginBottom: 5 },
+  title: { fontSize: 28, fontWeight: "bold", marginBottom: 5,marginTop:50 },
 
 button: {
     borderWidth: 1,

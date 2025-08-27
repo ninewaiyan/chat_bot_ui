@@ -22,22 +22,13 @@ export default function Settings() {
   // --- User Info ---
   const [userName, setUserName] = useState("John Doe");
   const [previousName, setPreviousName] = useState("John Doe");
-
   const [userPhone, setUserPhone] = useState("+959123456789");
-  const [editingName, setEditingName] = useState(false);
-
-  const handleUpdateName = () => {
-    console.log("Updated Name:", userName);
-    setPreviousName(userName); // save new value
-    setEditingName(false);
-  };
-
 
   // --- Modal state ---
-  const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const [nameModalVisible, setNameModalVisible] = useState(false);
+  const [nameInput, setNameInput] = useState(userName);
 
+  const [passwordModalVisible, setPasswordModalVisible] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -48,6 +39,13 @@ export default function Settings() {
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const handleUpdateName = () => {
+    if (!nameInput.trim() || nameInput === previousName) return;
+    setUserName(nameInput);
+    setPreviousName(nameInput);
+    setNameModalVisible(false);
+  };
 
   const handleChangePassword = () => {
     setPasswordError("");
@@ -64,7 +62,7 @@ export default function Settings() {
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
-    hideModal();
+    setPasswordModalVisible(false);
   };
 
   const passwordStrength = (password: string) => {
@@ -92,92 +90,17 @@ export default function Settings() {
         {/* --- Centered Header Section --- */}
         <View style={styles.centerHeader}>
           <Text style={[styles.title, { color: isDark ? "#fff" : "#000" }]}>{t("settings")}</Text>
-          <View style={styles.userSection}>
-            {editingName ? (
-              <View style={{ width: "100%" }}>
-                {/* <TextInput
-                  label={t("name")}
-                  value={userName}
-                  onChangeText={setUserName}
-                  style={{ marginBottom: 0, backgroundColor: "transparent" }}
-                /> */}
 
-                <TextInput
-                  label={t("name")}
-                  value={userName}
-                  onChangeText={setUserName}
-                  style={{ backgroundColor: "transparent", marginBottom: 0 }}
-                  contentStyle={{ height: 40 }} // reduces internal height
-                  dense={true}                 // reduces padding for a compact look
-                />
-
-                {/* <Button
-                  mode="contained"
-                  onPress={handleUpdateName}
-                  style={{ marginBottom: 5 }}
-                  disabled={!userName.trim() || userName === previousName} // disable if empty or unchanged
-                >
-                  {t("update")}
-                </Button>
-                <Button
-                  mode="text"
-                  onPress={() => {
-                    setUserName(previousName); // revert to previous value
-                    setEditingName(false);
-                  }}
-                >
-                  {t("cancel")}
-                </Button> */}
-
-
-                <Pressable
-                  onPress={handleUpdateName}
-                  disabled={!userName.trim() || userName === previousName}
-                  style={{
-                    backgroundColor:
-                      !userName.trim() || userName === previousName ? "#e2c0ffff" : "#a16fecef", // lighter pink if disabled
-                    paddingVertical: 12,
-                    paddingHorizontal: 20,
-                    borderRadius: 8,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: 5,
-                    opacity: !userName.trim() || userName === previousName ? 0.6 : 1,
-                  }}
-                >
-                  <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>
-                    {t("update")}
-                  </Text>
-                </Pressable>
-
-                {/* Cancel button */}
-                <Pressable
-                  onPress={() => {
-                    setUserName(previousName); // revert
-                    setEditingName(false);
-                  }}
-                  style={{
-                    marginTop: 5,
-                    paddingVertical: 10,
-                    alignItems: "center",
-                  }}
-                >
-                  <Text style={{ color: "#f069ffff", fontSize: 16, fontWeight: "500" }}>
-                    {t("cancel")}
-                  </Text>
-                </Pressable>
-              </View>
-            ) : (
-              <TouchableOpacity onPress={() => setEditingName(true)} style={{ alignItems: "center" }}>
-                <Text style={{ fontSize: 18, fontWeight: "bold", color: isDark ? "#fff" : "#000" }}>
-                  {userName}
-                </Text>
-                <Text style={{ color: isDark ? "#aaa" : "#555" }}>{userPhone}</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-
-
+          {/* User Info */}
+          <TouchableOpacity onPress={() => {
+            setNameInput(userName);
+            setNameModalVisible(true);
+          }} style={{ alignItems: "center" }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold", color: isDark ? "#fff" : "#000" }}>
+              {userName}
+            </Text>
+            <Text style={{ color: isDark ? "#aaa" : "#555" }}>{userPhone}</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Dark Mode */}
@@ -196,19 +119,6 @@ export default function Settings() {
         <View style={styles.row}>
           <Text style={{ color: isDark ? "#fff" : "#000", fontSize: 18 }}>{t("language")}</Text>
           <View style={{ flexDirection: "row", gap: 10 }}>
-            {/* <Button
-              mode={language.startsWith("en") ? "contained" : "outlined"}
-              onPress={() => changeLanguage("en")}
-            >
-              {t("english")}
-            </Button>
-            <Button
-              mode={language.startsWith("mm") || language.startsWith("my") ? "contained" : "outlined"}
-              onPress={() => changeLanguage("mm")}
-            >
-              {t("myanmar")}
-            </Button> */}
-
             {/* English Button */}
             <Pressable
               onPress={() => changeLanguage("en")}
@@ -224,13 +134,7 @@ export default function Settings() {
                 borderColor: "#dc69ffff",
               }}
             >
-              <Text
-                style={{
-                  color: language.startsWith("en") ? "#fff" : "#dc69ffff",
-                  fontSize: 16,
-                  fontWeight: "500",
-                }}
-              >
+              <Text style={{ color: language.startsWith("en") ? "#fff" : "#dc69ffff", fontSize: 16, fontWeight: "500" }}>
                 {t("english")}
               </Text>
             </Pressable>
@@ -245,46 +149,20 @@ export default function Settings() {
                 alignItems: "center",
                 justifyContent: "center",
                 marginBottom: 10,
-                backgroundColor:
-                  language.startsWith("mm") || language.startsWith("my") ? "#d269ffff" : "transparent",
-                borderWidth:
-                  language.startsWith("mm") || language.startsWith("my") ? 0 : 1,
+                backgroundColor: language.startsWith("mm") || language.startsWith("my") ? "#d269ffff" : "transparent",
+                borderWidth: language.startsWith("mm") || language.startsWith("my") ? 0 : 1,
                 borderColor: "#dc69ffff",
               }}
             >
-              <Text
-                style={{
-                  color:
-                    language.startsWith("mm") || language.startsWith("my") ? "#fff" : "#df69ffff",
-                  fontSize: 16,
-                  fontWeight: "500",
-                }}
-              >
+              <Text style={{ color: language.startsWith("mm") || language.startsWith("my") ? "#fff" : "#dc69ffff", fontSize: 16, fontWeight: "500" }}>
                 {t("myanmar")}
               </Text>
             </Pressable>
           </View>
         </View>
 
-        {/* Change Password Button */}
-        {/* <Button mode="contained" onPress={showModal} style={{ marginBottom: 10 }}>
-          {t("change_password")}
-        </Button> */}
-
-        {/* Logout */}
-        {/* <Button mode="contained" onPress={handleLogout} style={{ marginBottom: 10 }}>
-          {t("logout")}
-        </Button> */}
-
-        {/* <Button mode="contained" onPress={() => router.push("/")}>
-          {t("backHome")}
-        </Button> */}
-
-
-
-        {/* Logout */}
         {/* Change Password */}
-        <Pressable style={styles.pinkButton} onPress={showModal}>
+        <Pressable style={styles.pinkButton} onPress={() => setPasswordModalVisible(true)}>
           <Text style={styles.pinkButtonText}>{t("change_password")}</Text>
         </Pressable>
 
@@ -294,17 +172,56 @@ export default function Settings() {
         </Pressable>
 
         {/* Back Home */}
-        <Pressable
-          style={styles.pinkButton}
-          onPress={() => router.push("/home")}
-        >
+        <Pressable style={styles.pinkButton} onPress={() => router.push("/home")}>
           <Text style={styles.pinkButtonText}>{t("backHome")}</Text>
         </Pressable>
+
+        {/* --- Modal for Name Edit --- */}
+        <Portal>
+          <Modal
+            visible={nameModalVisible}
+            onDismiss={() => setNameModalVisible(false)}
+            contentContainerStyle={[styles.modalContainer, { backgroundColor: isDark ? "#222" : "#fff" }]}
+          >
+            <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15, color: isDark ? "#fff" : "#000" }}>
+              {t("edit_name")}
+            </Text>
+            <TextInput
+              label={t("name")}
+              value={nameInput}
+              onChangeText={setNameInput}
+              style={styles.input}
+            />
+            <Pressable
+              onPress={handleUpdateName}
+              disabled={!nameInput.trim() || nameInput === previousName}
+              style={{
+                backgroundColor: !nameInput.trim() || nameInput === previousName ? "#FFC0CB" : "#FF69B4",
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+                borderRadius: 8,
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: !nameInput.trim() || nameInput === previousName ? 0.6 : 1,
+                marginBottom: 10,
+              }}
+            >
+              <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>{t("update")}</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => setNameModalVisible(false)}
+              style={{ paddingVertical: 10, alignItems: "center" }}
+            >
+              <Text style={{ color: "#FF69B4", fontSize: 16, fontWeight: "500" }}>{t("cancel")}</Text>
+            </Pressable>
+          </Modal>
+        </Portal>
+
         {/* --- Modal for Change Password --- */}
         <Portal>
           <Modal
-            visible={visible}
-            onDismiss={hideModal}
+            visible={passwordModalVisible}
+            onDismiss={() => setPasswordModalVisible(false)}
             contentContainerStyle={[styles.modalContainer, { backgroundColor: isDark ? "#222" : "#fff" }]}
           >
             <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15, color: isDark ? "#fff" : "#000" }}>
@@ -319,7 +236,6 @@ export default function Settings() {
               style={styles.input}
               right={<TextInput.Icon icon={showCurrent ? "eye-off" : "eye"} onPress={() => setShowCurrent(!showCurrent)} />}
             />
-
             <TextInput
               label={t("new_password")}
               value={newPassword}
@@ -331,7 +247,6 @@ export default function Settings() {
             <Text style={{ color: strengthColor(passwordStrength(newPassword)), marginBottom: 10 }}>
               {newPassword ? `Strength: ${passwordStrength(newPassword)}` : ""}
             </Text>
-
             <TextInput
               label={t("confirm_password")}
               value={confirmPassword}
@@ -340,65 +255,28 @@ export default function Settings() {
               style={styles.input}
               right={<TextInput.Icon icon={showConfirm ? "eye-off" : "eye"} onPress={() => setShowConfirm(!showConfirm)} />}
             />
-
             {passwordError ? <Text style={{ color: "red", marginBottom: 10 }}>{passwordError}</Text> : null}
             {success ? <Text style={{ color: "green", marginBottom: 10 }}>{success}</Text> : null}
 
-            {/* <Button
-              mode="contained"
-              onPress={handleChangePassword}
-              disabled={passwordStrength(newPassword) !== "Strong 🔵" || newPassword !== confirmPassword}
-            >
-              {t("change")}
-            </Button>
-            <Button mode="text" onPress={hideModal} style={{ marginTop: 10 }}>
-              {t("cancel")}
-            </Button> */}
-
-
-
             <Pressable
               onPress={handleChangePassword}
-              disabled={
-                passwordStrength(newPassword) !== "Strong 🔵" ||
-                newPassword !== confirmPassword
-              }
+              disabled={passwordStrength(newPassword) !== "Strong 🔵" || newPassword !== confirmPassword}
               style={{
-                backgroundColor:
-                  passwordStrength(newPassword) === "Strong 🔵" &&
-                    newPassword === confirmPassword
-                    ? "#FF69B4"
-                    : "#FFC0CB", // lighter pink when disabled
+                backgroundColor: passwordStrength(newPassword) === "Strong 🔵" && newPassword === confirmPassword ? "#FF69B4" : "#FFC0CB",
                 paddingVertical: 12,
                 paddingHorizontal: 20,
                 borderRadius: 8,
                 alignItems: "center",
                 justifyContent: "center",
-                opacity:
-                  passwordStrength(newPassword) === "Strong 🔵" &&
-                    newPassword === confirmPassword
-                    ? 1
-                    : 0.6, // reduce opacity when disabled
+                opacity: passwordStrength(newPassword) === "Strong 🔵" && newPassword === confirmPassword ? 1 : 0.6,
+                marginBottom: 10,
               }}
             >
-              <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>
-                {t("change")}
-              </Text>
+              <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>{t("change")}</Text>
             </Pressable>
-
-            <Pressable
-              onPress={hideModal}
-              style={{
-                marginTop: 10,
-                paddingVertical: 10,
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ color: "#FF69B4", fontSize: 16, fontWeight: "500" }}>
-                {t("cancel")}
-              </Text>
+            <Pressable onPress={() => setPasswordModalVisible(false)} style={{ paddingVertical: 10, alignItems: "center" }}>
+              <Text style={{ color: "#FF69B4", fontSize: 16, fontWeight: "500" }}>{t("cancel")}</Text>
             </Pressable>
-
           </Modal>
         </Portal>
       </View>
@@ -410,13 +288,11 @@ const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "flex-start", padding: 20 },
   centerHeader: { alignItems: "center", marginBottom: 30 },
   title: { fontSize: 28, fontWeight: "bold", marginBottom: 10 },
-  userSection: { marginTop: 10, alignItems: "center" },
   row: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
   modalContainer: { padding: 20, margin: 20, borderRadius: 12 },
   input: { marginBottom: 10, backgroundColor: "transparent" },
-
   pinkButton: {
-    backgroundColor: "#a46adbff", // solid pink
+    backgroundColor: "#a46adbff",
     paddingVertical: 12,
     paddingHorizontal: 20,
     marginBottom: 10,
@@ -424,9 +300,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  pinkButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "500",
-  },
+  pinkButtonText: { color: "#fff", fontSize: 16, fontWeight: "500" },
 });

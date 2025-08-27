@@ -299,20 +299,16 @@
 //firebase skip version
 
 // app/forgetpassword.tsx
+// app/forgetpassword.tsx
 import { useNavigation, useRouter } from "expo-router";
-import React, {
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
+import React, { useContext, useEffect, useLayoutEffect, useRef, useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Keyboard,
+  KeyboardAvoidingView,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -357,7 +353,7 @@ export default function ForgetPassword() {
   // HEADER
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Forget Password",
+      headerTitle: t("forget_password"),
       headerRight: () => (
         <View style={{ flexDirection: "row", marginRight: 10 }}>
           <TouchableOpacity onPress={toggle} style={styles.headerButton}>
@@ -368,7 +364,7 @@ export default function ForgetPassword() {
         </View>
       ),
     });
-  }, [navigation, toggle, isDark]);
+  }, [navigation, toggle, isDark, t]);
 
   // OTP resend timer
   useEffect(() => {
@@ -384,6 +380,17 @@ export default function ForgetPassword() {
     const otpValue = otp.join("");
     if (otpValue.length === 6) verifyOtp(otpValue);
   }, [otp]);
+
+  const colors = {
+    background: isDark ? "#121212" : "#fff",
+    text: isDark ? "#fff" : "#000",
+    placeholder: isDark ? "#aaa" : "#555",
+    border: isDark ? "#bbb" : "#333",
+    primary: "#c669ffff",
+    primaryDisabled: "#ebc0ffff",
+    otpBorder: isDark ? "#bbb" : "#333",
+    showHide: isDark ? "#4da6ff" : "#007bff",
+  };
 
   const isPhoneValid = () => /^\+\d{9,15}$/.test(phoneNumber);
 
@@ -406,15 +413,12 @@ export default function ForgetPassword() {
   const verifyOtp = (otpValue: string) => {
     startTransition(() => {
       setError("");
-
-      // Test Mode
       if (phoneNumber === TEST_PHONE && otpValue === TEST_OTP) {
         setOtpVerified(true);
         setSuccess("✅ OTP Verified (Test Mode)");
         Keyboard.dismiss();
         return;
       }
-
       setOtpVerified(false);
       setError("❌ OTP is incorrect (use 123456)");
     });
@@ -429,9 +433,7 @@ export default function ForgetPassword() {
 
   const handleResetPassword = () => {
     if (!otpVerified) return setError("Please verify OTP first");
-    if (newPassword !== confirmPassword)
-      return setError("Passwords do not match");
-
+    if (newPassword !== confirmPassword) return setError("Passwords do not match");
     console.log("📌 Reset Password:", { phoneNumber, newPassword });
     alert("✅ Password reset success (check console)");
     router.push("/login");
@@ -450,196 +452,141 @@ export default function ForgetPassword() {
   const allFieldsFilled = () => otpVerified && newPassword && confirmPassword;
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: isDark ? "#121212" : "#fff" },
-      ]}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={{ flex: 1 }}
+      keyboardVerticalOffset={80}
     >
-      {!otpVerified && (
-        <>
-          <View style={styles.header}>
-            <Text
-              style={[styles.title, { color: isDark ? "#fff" : "#000" }]}
-            >
-              {t("fp_title")}
-            </Text>
-          </View>
+      <ScrollView
+        contentContainerStyle={{ padding: 20, backgroundColor: colors.background, flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        {!otpVerified && (
+          <>
+            <View style={styles.header}>
+              <Text style={[styles.title, { color: colors.text }]}>{t("fp_title")}</Text>
+            </View>
 
-          <TextInput
-            style={[
-              styles.input,
-              {
-                borderColor: isDark ? "#bbb" : "#333",
-                color: isDark ? "#fff" : "#000",
-              },
-            ]}
-            placeholder={t("phone")}
-            placeholderTextColor={isDark ? "#aaa" : "#555"}
-            keyboardType="phone-pad"
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-          />
-          {/* <Button
-            mode="contained"
-            onPress={requestOtp}
-            disabled={!isPhoneValid() || resendCountdown > 0}
-            style={styles.button}
-          >
-            {resendCountdown > 0
-              ? t("resend_otp") + ` ${resendCountdown}s`
-              : t("send_otp")}
-          </Button> */}
-
-          <Pressable
-            onPress={requestOtp}
-            disabled={!isPhoneValid() || resendCountdown > 0}
-            style={{
-              backgroundColor:
-                !isPhoneValid() || resendCountdown > 0 ? "#FFC0CB" : "#FF69B4", // lighter pink if disabled
-              paddingVertical: 12,
-              paddingHorizontal: 20,
-              borderRadius: 8,
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: 15,
-              opacity: !isPhoneValid() || resendCountdown > 0 ? 0.6 : 1,
-            }}
-          >
-            <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>
-              {resendCountdown > 0
-                ? `${t("resend_otp")} ${resendCountdown}s`
-                : t("send_otp")}
-            </Text>
-          </Pressable>
-        </>
-      )}
-
-      {!otpVerified && otpRequested && (
-        <View style={styles.otpContainer}>
-          {otp.map((digit, idx) => (
             <TextInput
-              key={idx}
-              ref={(el) => (otpInputs.current[idx] = el!)}
-              style={[
-                styles.otpBox,
-                {
-                  borderColor: isDark ? "#bbb" : "#333",
-                  color: isDark ? "#fff" : "#000",
-                },
-              ]}
-              keyboardType="number-pad"
-              maxLength={1}
-              value={digit}
-              onChangeText={(value) => handleOtpChange(idx, value)}
-              secureTextEntry={true}
-              textAlign="center"
+              style={[styles.input, { borderColor: colors.border, color: colors.text }]}
+              placeholder={t("phone")}
+              placeholderTextColor={colors.placeholder}
+              keyboardType="phone-pad"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
             />
-          ))}
-        </View>
-      )}
 
-      {otpVerified && (
-        <>
-          <View style={styles.header}>
-            <Text
-              style={[styles.title, { color: isDark ? "#fff" : "#000" }]}
-            >
-              {t("reset_password")}
-            </Text>
-          </View>
-
-          <TextInput
-            style={[
-              styles.input,
-              {
-                borderColor: isDark ? "#bbb" : "#333",
-                color: isDark ? "#fff" : "#000",
-              },
-            ]}
-            placeholder={t("new_password")}
-            placeholderTextColor={isDark ? "#aaa" : "#555"}
-            secureTextEntry={!showPassword}
-            value={newPassword}
-            onChangeText={setNewPassword}
-          />
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <Text
+            <Pressable
+              onPress={requestOtp}
+              disabled={!isPhoneValid() || resendCountdown > 0}
               style={{
-                color: isDark ? "#4da6ff" : "#007bff",
-                marginBottom: 5,
+                backgroundColor: !isPhoneValid() || resendCountdown > 0 ? colors.primaryDisabled : colors.primary,
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+                borderRadius: 40,
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 15,
+                opacity: !isPhoneValid() || resendCountdown > 0 ? 0.6 : 1,
               }}
             >
-              {showPassword ? t("hide") : t("show")}
-            </Text>
-          </TouchableOpacity>
-          <Text
-            style={{
-              color:
-                passwordStrength() === "Strong"
-                  ? "green"
-                  : passwordStrength() === "Medium"
+              <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>
+                {resendCountdown > 0 ? `${t("resend_otp")} ${resendCountdown}s` : t("send_otp")}
+              </Text>
+            </Pressable>
+          </>
+        )}
+
+        {!otpVerified && otpRequested && (
+          <View style={styles.otpContainer}>
+            {otp.map((digit, idx) => (
+              <TextInput
+                key={idx}
+                ref={(el) => (otpInputs.current[idx] = el!)}
+                style={[styles.otpBox, { borderColor: colors.otpBorder, color: colors.text }]}
+                keyboardType="number-pad"
+                maxLength={1}
+                value={digit}
+                onChangeText={(value) => handleOtpChange(idx, value)}
+                secureTextEntry
+                textAlign="center"
+              />
+            ))}
+          </View>
+        )}
+
+        {otpVerified && (
+          <>
+            <View style={styles.header}>
+              <Text style={[styles.title, { color: colors.text }]}>{t("reset_password")}</Text>
+            </View>
+
+            <TextInput
+              style={[styles.input, { borderColor: colors.border, color: colors.text }]}
+              placeholder={t("new_password")}
+              placeholderTextColor={colors.placeholder}
+              secureTextEntry={!showPassword}
+              value={newPassword}
+              onChangeText={setNewPassword}
+            />
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              <Text style={{ color: colors.showHide, marginBottom: 5 }}>
+                {showPassword ? t("hide") : t("show")}
+              </Text>
+            </TouchableOpacity>
+            <Text
+              style={{
+                color:
+                  passwordStrength() === "Strong"
+                    ? "green"
+                    : passwordStrength() === "Medium"
                     ? "orange"
                     : "red",
-              marginBottom: 10,
-            }}
-          >
-            {newPassword ? `Strength: ${passwordStrength()}` : ""}
-          </Text>
-
-          <TextInput
-            style={[
-              styles.input,
-              {
-                borderColor: isDark ? "#bbb" : "#333",
-                color: isDark ? "#fff" : "#000",
-              },
-            ]}
-            placeholder={t("confirm_password")}
-            placeholderTextColor={isDark ? "#aaa" : "#555"}
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-
-          {/* <Button
-            mode="contained"
-            onPress={handleResetPassword}
-            disabled={!allFieldsFilled()}
-            style={styles.button}
-          >
-            {t("reset_password")}
-          </Button> */}
-
-          <Pressable
-            onPress={handleResetPassword}
-            disabled={!allFieldsFilled()}
-            style={{
-              backgroundColor: !allFieldsFilled() ? "#ebc0ffff" : "#c669ffff", // lighter pink if disabled
-              paddingVertical: 12,
-              paddingHorizontal: 20,
-              borderRadius: 8,
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: 15,
-              opacity: !allFieldsFilled() ? 0.6 : 1,
-            }}
-          >
-            <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>
-              {t("reset_password")}
+                marginBottom: 10,
+              }}
+            >
+              {newPassword ? `Strength: ${passwordStrength()}` : ""}
             </Text>
-          </Pressable>
-        </>
-      )}
 
-      {error ? <Text style={{ color: "red", marginTop: 10 }}>{error}</Text> : null}
-      {success ? <Text style={{ color: "green", marginTop: 10 }}>{success}</Text> : null}
-    </View>
+            <TextInput
+              style={[styles.input, { borderColor: colors.border, color: colors.text }]}
+              placeholder={t("confirm_password")}
+              placeholderTextColor={colors.placeholder}
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+
+            <Pressable
+              onPress={handleResetPassword}
+              disabled={!allFieldsFilled()}
+              style={{
+                backgroundColor: !allFieldsFilled() ? colors.primaryDisabled : colors.primary,
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+                borderRadius: 8,
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 15,
+                opacity: !allFieldsFilled() ? 0.6 : 1,
+              }}
+            >
+              <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>
+                {t("reset_password")}
+              </Text>
+            </Pressable>
+          </>
+        )}
+
+        {error ? <Text style={{ color: "red", marginTop: 10 }}>{error}</Text> : null}
+        {success ? <Text style={{ color: "green", marginTop: 10 }}>{success}</Text> : null}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20 },
+  container: { flex: 1 },
   headerButton: { marginLeft: 15 },
   input: {
     borderWidth: 1,
@@ -648,12 +595,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 16,
   },
-  button: { marginBottom: 15 },
-  otpContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 15,
-  },
+  otpContainer: { flexDirection: "row", justifyContent: "space-between", marginBottom: 15 },
   otpBox: {
     borderWidth: 1,
     borderRadius: 8,
@@ -661,7 +603,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     width: 45,
   },
-  subtitle: { fontSize: 16 },
-  header: { marginBottom: 30, alignItems: "center" },
-  title: { fontSize: 28, fontWeight: "bold", marginBottom: 5 },
+  header: { marginBottom: 20, alignItems: "center", marginTop:100},
+  title: { fontSize: 20, fontWeight: "bold", marginBottom: 5 },
 });

@@ -337,7 +337,6 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { Button } from "react-native-paper";
 import { ThemeContext } from "../ThemeContext";
 
 export default function Register() {
@@ -597,9 +596,30 @@ export default function Register() {
                         onChangeText={setConfirmPassword}
                     />
 
-                    <Button mode="contained" onPress={handleRegister} disabled={!allFieldsFilled()}>
+                    {/* <Button mode="contained" onPress={handleRegister} disabled={!allFieldsFilled()}>
                         {t("register")}
-                    </Button>
+                    </Button> */}
+
+                    <Pressable
+                        onPress={handleRegister}
+                        disabled={!allFieldsFilled()}
+                        style={[
+                            styles.button,
+                            {
+                                opacity: !allFieldsFilled() ? 0.6 : 1, // dim if disabled
+                                backgroundColor: !allFieldsFilled() ? "#ebc0ffff" : "#c669ffff", // lighter pink if disabled
+                            },
+                        ]}
+                    >
+                        <Text style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}>
+                            {t("register")}
+                        </Text>
+                    </Pressable>
+
+
+
+
+
                 </>
             )}
 
@@ -642,8 +662,8 @@ const styles = StyleSheet.create({
     otpContainer: { flexDirection: "row", justifyContent: "space-between", marginBottom: 15 },
     otpBox: { borderWidth: 1, borderRadius: 8, padding: Platform.OS === "ios" ? 15 : 12, fontSize: 18, width: 45 },
     subtitle: { fontSize: 16 },
-    header: { marginBottom: 40, alignItems: "center" },
-    title: { fontSize: 28, fontWeight: "bold", marginBottom: 5 },
+    header: { alignItems: "center", marginTop: 30 },
+    title: { fontSize: 15, fontWeight: "bold", marginBottom: 5 },
 
     button: {
         borderWidth: 1,

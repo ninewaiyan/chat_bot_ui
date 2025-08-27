@@ -51,7 +51,7 @@ export default function Home() {
 
             {/* Top Section */}
             <View style={styles.topSection}>
-                <Text style={[styles.title, { color: colors.text }]}>ChatAi</Text>
+                <Text style={[styles.title, { color: colors.text }]}>BurmaBot</Text>
                 <Text style={[styles.subtitle, { color: colors.subtitle }]}>
                     Chat For Your Privacy
                 </Text>
@@ -114,6 +114,8 @@ const styles = StyleSheet.create({
         fontSize: 32,
         fontWeight: "800",
         marginBottom: 8,
+        marginTop:50,
+      
     },
     subtitle: {
         fontSize: 16,
